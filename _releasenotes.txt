@@ -1,0 +1,6 @@
+/* 
+ *
+ * 0.0.1 20170303
+ * First npm public release 
+ *
+ */
