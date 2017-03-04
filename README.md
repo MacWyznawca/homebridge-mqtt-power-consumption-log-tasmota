@@ -1,6 +1,6 @@
 # homebridge-mqtt-power-consumption-log-tasmota
 
-Plugin to HomeBridge optimized for work with Itead Sonoff POW hardware with firmware [Sonoff-Tasmota](https://github.com/arendst/Sonoff-Tasmota) via MQTT with log data to file. Partially emulate Elgato Eve Energy. Measure used power and write data to log text files. Act as switch and power meter.
+Plugin to HomeBridge optimized for work with Itead Sonoff POW hardware with firmware [Sonoff-Tasmota](https://github.com/arendst/Sonoff-Tasmota) via MQTT with log data to file. Partially emulate Elgato Eve Energy. Measure used power and write logged data to csv files. It acts as a power switch and meter energy consumed.
 
 Like this? Please buy me a beer (or coffee) ;-) <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=CK56Q7SFHEHSW"><img src="http://macwyznawca.pl/donate-paypal2.png" alt="Donate a coder" data-canonical-src="http://macwyznawca.pl/donate-paypal.svg" style="max-width:100%;"></a>
 
@@ -11,7 +11,20 @@ Installation
 --------------------
     sudo npm install -g homebridge-mqtt-power-consumption-log-tasmota
 
-Sample HomeBridge Configuration
+## Description of log files
+Period file:
+2017-03-04 07:50:00	0.16657	1858	1858	1	7.855	223
+**Data and time** \t **period used power [kWh]** \t **power [W] \t ** apparent power [VA] \t power factor \t current [A] \t voltage [V]
+
+Hourly file:
+2017-03-04 08:00:00	1.23468	9.80263	14.68135	7	6	4
+**Data and time** \t **hourly used power [kWh]** \t **today used power [kWh]** \t **total used power [kWh]** \t **hour (UTC)** \t **day of week** \t **day of month**
+
+Daily file:
+2017-03-04 08:41:02	9.80263	14.68135	6	4
+**Data and time** \t **daily used power [kWh]** \t **total used power [kWh]** \t **day of week** \t **day of month**
+
+# Sample HomeBridge Configuration
 --------------------
 
 {
@@ -100,6 +113,6 @@ Sample HomeBridge Configuration
 
 **"zeroHour": "23"** - time (UTC) at which you want to reset the timer min./max. Empty to reset after 24 hours since the last minimum or maximum. [optional]
 
-The files will be saved in the specified path with the "topic" (ex. Sonoff) in the file name ex. "/root/.homebridge/sonoff_period_10.txt", "/root/.homebridge/sonoff_hourly.txt".
+The files will be saved in the specified path with the "topic" (ex. Sonoff) in the file name ex. "/root/.homebridge/sonoff_period_10.csv", "/root/.homebridge/sonoff_hourly.csf".
 
 **timeOffset": "-60"** - timezone offset from UTC (minutes). [optional]

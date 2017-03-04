@@ -1,4 +1,8 @@
-/* 
+/*
+ *
+ * 0.0.5 20170304
+ * Changing the file format to csv.
+ * Added rounding results for better readability.
  *
  * 0.0.2 20170304
  * Fixed error witch save dayly data.
