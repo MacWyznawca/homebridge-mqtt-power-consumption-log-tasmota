@@ -1,5 +1,8 @@
 /*
  *
+ * 0.0.6 20170304
+ * Fixed name of daily files. 
+ *
  * 0.0.5 20170304
  * Changing the file format to csv.
  * Added rounding results for better readability.

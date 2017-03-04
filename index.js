@@ -74,8 +74,8 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	// change old filename from .txt to .csv
 	this.fs.rename(this.patchToSave + this.filename + "_hourly.txt", this.patchToSave + this.filename + "_hourly.csv", function(err) {
 		if (err) that.log('Nothing to change _hourly'); });
-	this.fs.rename(this.patchToSave + this.filename + "_dayly.txt", this.patchToSave + this.filename + "_dayly.csv", function(err) {
-		if (err) that.log('Nothing to change _dayly'); });
+	this.fs.rename(this.patchToSave + this.filename + "_dayly.txt", this.patchToSave + this.filename + "_daily.csv", function(err) {
+		if (err) that.log('Nothing to change _daily'); });
 	this.fs.rename(this.patchToSave + this.filename + "_period_" + this.savePeriod + ".txt", this.patchToSave + this.filename + "_period_" + this.savePeriod + ".csv", function(err) {
 		if (err) that.log('Nothing to change _period'); });
 
@@ -442,7 +442,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 		that.lastHourkWhReset = true;
 	});
 
-	// Save data dayly
+	// Save data daily
 	var j = schedule.scheduleJob("0 0 0 * * *", function() {
 		if (that.savePeriod > 0 && that.todayNewData) {
 			let date = new Date();
@@ -452,9 +452,9 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 				(that.lastToSave.totalkWh).toFixed(5) + "\t" +
 				date.getDay() + "\t" +
 				date.getDate() + "\n";
-			that.fs.appendFile(that.patchToSave + that.filename + "_dayly.csv", dataToAppend, "utf8", function(err) {
+			that.fs.appendFile(that.patchToSave + that.filename + "_daily.csv", dataToAppend, "utf8", function(err) {
 				if (err) {
-					that.log("Problem with save dayly", err);
+					that.log("Problem with save daily", err);
 				}
 			});
 		}
@@ -468,7 +468,7 @@ var j = schedule.scheduleJob("1 0 1 * *", function() {
 	that.fs.rename(that.patchToSave + that.filename + "_hourly.csv", that.patchToSave + that.filename + "_hourly_" + convertDateTofilename(data.Time) + ".csv", function(err) {
 		if (err) that.log('ERROR change filename: ' + err);
 	});
-	that.fs.rename(that.patchToSave + that.filename + "_dayly.csv", that.patchToSave + that.filename + "_dayly_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+	that.fs.rename(that.patchToSave + that.filename + "_daily.csv", that.patchToSave + that.filename + "_daily_" + convertDateTofilename(data.Time) + ".csv", function(err) {
 		if (err) that.log('ERROR change filename: ' + err);
 	});
 });
