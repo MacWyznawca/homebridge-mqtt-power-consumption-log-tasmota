@@ -440,6 +440,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	// Save data dayly
 	var j = schedule.scheduleJob("0 0 0 * * *", function() {
 		if (that.savePeriod > 0 && that.todayNewData) {
+			let date = new Date();
 			var dataToAppend =
 				convertDateUTCDtoLocalStr(new Date(), that.timeOffset) + "\t" +
 				that.lastToSave.todaykWh + "\t" +

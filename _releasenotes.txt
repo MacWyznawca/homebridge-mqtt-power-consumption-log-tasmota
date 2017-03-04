@@ -1,5 +1,8 @@
 /* 
  *
+ * 0.0.2 20170304
+ * Fixed error witch save dayly data.
+ *
  * 0.0.1 20170303
  * First npm public release 
  *
