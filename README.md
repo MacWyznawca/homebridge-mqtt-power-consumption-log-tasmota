@@ -21,35 +21,35 @@ Hourly file:
 **Data and time** \t **hourly used power [kWh]** \t **today used power [kWh]** \t **total used power [kWh]** \t **hour (UTC)** \t **day of week** \t **day of month**
 
 Daily file:
-2017-03-04 08:41:02	9.80263	14.68135	6	4
-**Data and time** \t **daily used power [kWh]** \t **total used power [kWh]** \t **day of week** \t **day of month**
+2017-03-04 08:41:02	9.80263	14.68135	6	4  2
+**Data and time** \t **daily used power [kWh]** \t **total used power [kWh]** \t **day of week** \t **day of month** \t **month (0-11)**
 
 # Sample HomeBridge Configuration
 --------------------
 
 {
-		
+
     "bridge": {
         "name": "Homebridge",
         "username": "CC:22:3D:E3:CE:30",
         "port": 51826,
         "pin": "031-45-154"
     },
-    
+
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
-	
+
     "platforms": [],
-	
+
 	"accessories": [
 		{
 			"accessory": "mqtt-power-consumption-log-tasmota",
-			
+
 			"name": "NAME OF THIS ACCESSORY",
-		
+
 			"url": "mqtt://MQTT-ADDRESS",
 			"username": "MQTT USER NAME",
 			"password": "MQTT PASSWORD",
-			
+
 			"topics": {
 				"statusGet": "stat/sonoff/POWER",
 				"statusSet": "cmnd/sonoff/power",
@@ -58,21 +58,21 @@ Daily file:
 			},
 			"onValue": "ON",
 			"offValue": "OFF",
-		
+
 			"outletInUseBy": "current",
 			"outletInUseCurrent": "0.01",
-		
+
 	        "activityTopic": "tele/sonoff/LWT",
 		    "activityParameter": "Online",
-	    
+
 			"startCmd": "cmnd/sonoff/TelePeriod",
 			"startParameter": "15",
-		
+
 			"patchToSave":"/root/.homebridge/",
 			"savePeriod": "15",
-		
+
 			"timeOffset": "-60",
-		
+
 			"manufacturer": "ITEAD",
 			"model": "Sonoff TH",
 			"serialNumberMAC": "MAC OR SERIAL NUMBER"

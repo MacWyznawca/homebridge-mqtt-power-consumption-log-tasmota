@@ -451,7 +451,8 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 				(that.lastToSave.todaykWh).toFixed(5) + "\t" +
 				(that.lastToSave.totalkWh).toFixed(5) + "\t" +
 				date.getDay() + "\t" +
-				date.getDate() + "\n";
+				date.getDate() + "\t" +
+				date.getMonth() + "\n";
 			that.fs.appendFile(that.patchToSave + that.filename + "_daily.csv", dataToAppend, "utf8", function(err) {
 				if (err) {
 					that.log("Problem with save daily", err);

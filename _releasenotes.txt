@@ -1,5 +1,8 @@
 /*
  *
+ * 0.1.0 20170305
+ * Added number of montch (0-11) to daily.csv
+ *
  * 0.0.6 20170304
  * Fixed name of daily files. 
  *
