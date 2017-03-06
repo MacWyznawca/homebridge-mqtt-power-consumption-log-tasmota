@@ -466,16 +466,16 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 
 // Roll hourly and day files mothly
 var j = schedule.scheduleJob("1 0 1 * *", function() {
-	that.fs.rename(that.patchToSave + that.filename + "_hourly.csv", that.patchToSave + that.filename + "_hourly_" + convertDateTofilename(data.Time) + ".csv", function(err) {
-		if (err) that.log('ERROR change filename: ' + err);
+	this.fs.rename(this.patchToSave + this.filename + "_hourly.csv", this.patchToSave + this.filename + "_hourly_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+		if (err) this.log('ERROR change filename: ' + err);
 	});
-	that.fs.rename(that.patchToSave + that.filename + "_daily.csv", that.patchToSave + that.filename + "_daily_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+	this.fs.rename(this.patchToSave + this.filename + "_daily.csv", this.patchToSave + this.filename + "_daily_" + convertDateTofilename(data.Time) + ".csv", function(err) {
 		if (err) that.log('ERROR change filename: ' + err);
 	});
 });
 // Roll periodycally files weekly
 var j = schedule.scheduleJob("1 0 * * 1", function() {
-	that.fs.rename(that.patchToSave + that.filename + "_period_" + that.savePeriod + ".csv", that.patchToSave + that.filename + "_period_" + that.savePeriod + "_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+	this.fs.rename(this.patchToSave + this.filename + "_period_" + this.savePeriod + ".csv", this.patchToSave + this.filename + "_period_" + this.savePeriod + "_" + convertDateTofilename(data.Time) + ".csv", function(err) {
 		if (err) that.log('ERROR change filename: ' + err);
 	});
 });
