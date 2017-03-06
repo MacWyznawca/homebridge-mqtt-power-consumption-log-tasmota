@@ -14,14 +14,17 @@ Installation
 ## Description of log files
 Period file:
 2017-03-06 08:10:00	0.03798	1712	1712	1.00	7.560	213	0.03798	0.700	32.960
+
 **Data and time** \t **period used power [kWh]** \t **power [W] \t ** apparent power [VA] \t power factor \t current [A] \t voltage [V] \t **hourly used power [kWh]** \t **today used power [kWh]** \t **total used power [kWh]**
 
 Hourly file:
 2017-03-04 08:00:00	1.23468	9.80263	14.68135	7	6	4
+
 **Data and time** \t **hourly used power [kWh]** \t **today used power [kWh]** \t **total used power [kWh]** \t **hour (UTC)** \t **day of week** \t **day of month**
 
 Daily file:
 2017-03-04 08:41:02	9.80263	14.68135	6	4  2
+
 **Data and time** \t **daily used power [kWh]** \t **total used power [kWh]** \t **day of week** \t **day of month** \t **month (0-11)**
 
 Files are tab \t separated.
