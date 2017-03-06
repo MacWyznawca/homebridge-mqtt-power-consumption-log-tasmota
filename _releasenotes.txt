@@ -1,9 +1,13 @@
 /*
+ * 0.2.0 20160306
+ * Added more data to "periodic" file.
+ * Added the ability to reset the total consumption which: a month, a year or never.
+ * 
  * 0.1.1 20170306
- * Fixed problem witch rolling files weekly
+ * Fixed problem witch rolling files weekly.
  *
  * 0.1.0 20170305
- * Added number of montch (0-11) to daily.csv
+ * Added number of montch (0-11) to daily.csv.
  *
  * 0.0.6 20170304
  * Fixed name of daily files. 

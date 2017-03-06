@@ -31,6 +31,8 @@
 		
 			"outletInUseBy": "current",
 			"outletInUseCurrent": "0.01",
+			
+			"totalPowerResetBy": "month",
 		
 	        "activityTopic": "tele/sonoff/LWT",
 		    "activityParameter": "Online",

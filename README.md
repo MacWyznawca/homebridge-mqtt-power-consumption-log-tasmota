@@ -13,8 +13,8 @@ Installation
 
 ## Description of log files
 Period file:
-2017-03-04 07:50:00	0.16657	1858	1858	1	7.855	223
-**Data and time** \t **period used power [kWh]** \t **power [W] \t ** apparent power [VA] \t power factor \t current [A] \t voltage [V]
+2017-03-06 08:10:00	0.03798	1712	1712	1.00	7.560	213	0.03798	0.700	32.960
+**Data and time** \t **period used power [kWh]** \t **power [W] \t ** apparent power [VA] \t power factor \t current [A] \t voltage [V] \t **hourly used power [kWh]** \t **today used power [kWh]** \t **total used power [kWh]**
 
 Hourly file:
 2017-03-04 08:00:00	1.23468	9.80263	14.68135	7	6	4
@@ -24,32 +24,34 @@ Daily file:
 2017-03-04 08:41:02	9.80263	14.68135	6	4  2
 **Data and time** \t **daily used power [kWh]** \t **total used power [kWh]** \t **day of week** \t **day of month** \t **month (0-11)**
 
+Files are tab \t separated.
+
 # Sample HomeBridge Configuration
 --------------------
 
 {
-
+	
     "bridge": {
         "name": "Homebridge",
         "username": "CC:22:3D:E3:CE:30",
         "port": 51826,
         "pin": "031-45-154"
     },
-
+	
     "description": "This is an example configuration file. You can use this as a template for creating your own configuration file.",
-
+	
     "platforms": [],
-
+	
 	"accessories": [
 		{
 			"accessory": "mqtt-power-consumption-log-tasmota",
-
+			
 			"name": "NAME OF THIS ACCESSORY",
-
+			
 			"url": "mqtt://MQTT-ADDRESS",
 			"username": "MQTT USER NAME",
 			"password": "MQTT PASSWORD",
-
+			
 			"topics": {
 				"statusGet": "stat/sonoff/POWER",
 				"statusSet": "cmnd/sonoff/power",
@@ -58,21 +60,23 @@ Daily file:
 			},
 			"onValue": "ON",
 			"offValue": "OFF",
-
+			
 			"outletInUseBy": "current",
 			"outletInUseCurrent": "0.01",
-
+			
+			"totalPowerResetBy": "month",
+			
 	        "activityTopic": "tele/sonoff/LWT",
 		    "activityParameter": "Online",
-
+			
 			"startCmd": "cmnd/sonoff/TelePeriod",
 			"startParameter": "15",
-
+			
 			"patchToSave":"/root/.homebridge/",
 			"savePeriod": "15",
-
+			
 			"timeOffset": "-60",
-
+			
 			"manufacturer": "ITEAD",
 			"model": "Sonoff TH",
 			"serialNumberMAC": "MAC OR SERIAL NUMBER"
@@ -97,7 +101,9 @@ Daily file:
 
 **"outletInUseBy": "current"** -  "outlet in use" it will be set only if the circuit current flows. [optional]
 
-"outletInUseCurrent": "0.01" - The current above which the "outlet in use" will be activated. [optional]
+**"outletInUseCurrent": "0.01"** - The current above which the "outlet in use" will be activated. [optional]
+
+**"totalPowerResetBy": "month"** - How often reset the consumed power: every "month", "year", or "" - never. [optional]
 
 **"activityTopic": "tele/sonoff/LWT"** - last will topic for check online state. [optional]
 
