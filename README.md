@@ -122,6 +122,4 @@ Files are tab \t separated.
 
 **"zeroHour": "23"** - time (UTC) at which you want to reset the timer min./max. Empty to reset after 24 hours since the last minimum or maximum. [optional]
 
-The files will be saved in the specified path with the "topic" (ex. Sonoff) in the file name ex. "/root/.homebridge/sonoff_period_10.csv", "/root/.homebridge/sonoff_hourly.csf".
-
-**timeOffset": "-60"** - timezone offset from UTC (minutes). [optional]
+The files will be saved in the specified path with the "topic" (ex. Sonoff) in the file name ex. "/root/.homebridge/sonoff_period_10.csv", "/root/.homebridge/sonoff_hourly.csv".

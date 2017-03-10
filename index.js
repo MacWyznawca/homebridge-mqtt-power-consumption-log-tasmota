@@ -1,4 +1,8 @@
-//'use strict';
+// Plugin to HomeBridge optimized for work with Itead Sonoff POW hardware with firmware
+// Sonoff-Tasmota via MQTT with log data to file. 
+// Partially emulate Elgato Eve Energy. Measure used power and write data to log text files.
+// Jaromir Kopp @MacWyznawca
+
 var inherits = require('util').inherits;
 var schedule = require('node-schedule');
 var Service, Characteristic;
@@ -20,19 +24,15 @@ function convertDateTofilename(date) {
 	return date;
 }
 
-function convertDateUTCDtoLocalStr(date, timeOffset) {
+function convertDateUTCDtoLocalStr(date) {
 	date = new Date(date);
-	var localOffset;
-	if (timeOffset != 0) {
-		localOffset = timeOffset * 60000;
-	} else {
-		localOffset = date.getTimezoneOffset() * 60000;
-	}
+	var localOffset = date.getTimezoneOffset() * 60000;
 	var localTime = date.getTime();
 	date = localTime - localOffset;
 	date = (new Date(date)).toISOString().replace(/T/, ' ').replace(/\..+/, '');
 	return date;
 }
+
 
 function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	this.fs = require("graceful-fs");
@@ -42,8 +42,6 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	this.manufacturer = config['manufacturer'] || "ITEAD";
 	this.model = config['model'] || "Sonoff";
 	this.serialNumberMAC = config['serialNumberMAC'] || "";
-
-	this.timeOffset = parseInt(config["timeOffset"]) || 0;
 
 	this.url = config['url'];
 
@@ -293,9 +291,13 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 
 	this.client.on('message', function(topic, message) {
 
-		if (topic == that.topics.energyGet) {
-			data = JSON.parse(message);
-
+		if (topic == that.topics.energyGet) {			
+			try {
+			  data = JSON.parse(message);
+			}
+			catch (e) {
+			  that.log("JSON problem");
+			}
 			if (data === null) {
 				return null
 			}
@@ -334,7 +336,12 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 							}
 						});
 					} else {
-						that.lastToSave = JSON.parse(data);
+						try {
+						  that.lastToSave = JSON.parse(data);
+						}
+						catch (e) {
+						  that.log("JSON problem");
+						}					
 						if (!that.lastToSave.hasOwnProperty("lastTodaykWh") ||
 							!that.lastToSave.hasOwnProperty("todaykWh") ||
 							!that.lastToSave.hasOwnProperty("totalkWh")) {
@@ -386,7 +393,12 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			that.activeStat = status == that.activityParameter;
 			that.service.setCharacteristic(Characteristic.StatusActive, that.activeStat);
 		} else if (topic == that.topics.stateGet) {
-			data = JSON.parse(message);
+			try {
+			  data = JSON.parse(message);
+			}
+			catch (e) {
+			  that.log("JSON problem");
+			}			
 			if (data.hasOwnProperty("POWER")) {
 				var status = data.POWER;
 				that.switchStatus = (status == that.onValue);
@@ -406,7 +418,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	var j = schedule.scheduleJob("0 */" + this.savePeriod + " * * * *", function() {
 		if (that.savePeriod > 0 && that.lastPeriodNewData) {
 			var dataToAppend =
-				convertDateUTCDtoLocalStr(new Date(), that.timeOffset) + "\t" +
+				convertDateUTCDtoLocalStr(new Date()) + "\t" +
 				(that.lastToSave.lastPeriodkWh).toFixed(5) + "\t" +
 				(that.powerConsumption).toFixed(0) + "\t" +
 				(that.powerConsumptionAV).toFixed(0) + "\t" +
@@ -432,7 +444,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 		if (that.savePeriod > 0 && that.lastHourNewData) {
 			let date = new Date();
 			var dataToAppend =
-				convertDateUTCDtoLocalStr(date, that.timeOffset) + "\t" +
+				convertDateUTCDtoLocalStr(date) + "\t" +
 				(that.lastToSave.lastHourkWh).toFixed(5) + "\t" +
 				(that.lastToSave.todaykWh).toFixed(3) + "\t" +
 				(that.lastToSave.totalkWh).toFixed(3) + "\t" +
@@ -454,7 +466,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 		if (that.savePeriod > 0 && that.todayNewData) {
 			let date = new Date();
 			var dataToAppend =
-				convertDateUTCDtoLocalStr(new Date(), that.timeOffset) + "\t" +
+				convertDateUTCDtoLocalStr(date) + "\t" +
 				(that.lastToSave.todaykWh).toFixed(3) + "\t" +
 				(that.lastToSave.totalkWh).toFixed(3) + "\t" +
 				date.getDay() + "\t" +
@@ -472,16 +484,16 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 
 	// Roll hourly and day files mothly
 	var j = schedule.scheduleJob("1 0 1 * *", function() {
-		that.fs.rename(that.patchToSave + that.filename + "_hourly.csv", that.patchToSave + that.filename + "_hourly_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+		that.fs.rename(that.patchToSave + that.filename + "_hourly.csv", that.patchToSave + that.filename + "_hourly_" + convertDateTofilename(Date()) + ".csv", function(err) {
 			if (err) that.log('ERROR change filename: ' + err);
 		});
-		that.fs.rename(that.patchToSave + that.filename + "_daily.csv", that.patchToSave + that.filename + "_daily_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+		that.fs.rename(that.patchToSave + that.filename + "_daily.csv", that.patchToSave + that.filename + "_daily_" + convertDateTofilename(Date()) + ".csv", function(err) {
 			if (err) that.log('ERROR change filename: ' + err);
 		});
 	});
 	// Roll periodycally files weekly
 	var k = schedule.scheduleJob("1 0 * * 1", function() {
-		that.fs.rename(that.patchToSave + that.filename + "_period_" + that.savePeriod + ".csv", that.patchToSave + that.filename + "_period_" + that.savePeriod + "_" + convertDateTofilename(data.Time) + ".csv", function(err) {
+		that.fs.rename(that.patchToSave + that.filename + "_period_" + that.savePeriod + ".csv", that.patchToSave + that.filename + "_period_" + that.savePeriod + "_" + convertDateTofilename(Date()) + ".csv", function(err) {
 			if (err) that.log('ERROR change filename: ' + err);
 		});
 	});

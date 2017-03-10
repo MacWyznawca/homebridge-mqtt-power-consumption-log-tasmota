@@ -42,9 +42,7 @@
 		
 			"patchToSave":"/root/.homebridge/",
 			"savePeriod": "15",
-		
-			"timeOffset": "-60",
-		
+				
 			"manufacturer": "ITEAD",
 			"model": "Sonoff TH",
 			"serialNumberMAC": "MAC OR SERIAL NUMBER"

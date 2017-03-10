@@ -1,6 +1,6 @@
 {
   "name": "homebridge-mqtt-power-consumption-log-tasmota",
-  "version": "0.2.0",
+  "version": "0.9.0",
   "description": "Plugin to HomeBridge optimized for work with Itead Sonoff POW hardware with firmware Sonoff-Tasmota via MQTT with log data to file. Partially emulate Elgato Eve Energy. Measure used power and write data to log text files.",
   "main": "index.js",
   "scripts": {
