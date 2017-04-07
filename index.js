@@ -3,6 +3,8 @@
 // Partially emulate Elgato Eve Energy. Measure used power and write data to log text files.
 // Jaromir Kopp @MacWyznawca
 
+'use strict';
+
 var inherits = require('util').inherits;
 var schedule = require('node-schedule');
 var Service, Characteristic;
