@@ -395,16 +395,19 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			that.activeStat = status == that.activityParameter;
 			that.service.setCharacteristic(Characteristic.StatusActive, that.activeStat);
 		} else if (topic == that.topics.stateGet) {
+			data = null;
 			try {
 			  data = JSON.parse(message);
 			}
 			catch (e) {
 			  that.log("JSON problem");
-			}			
-			if (data.hasOwnProperty("POWER")) {
-				var status = data.POWER;
-				that.switchStatus = (status == that.onValue);
-				that.service.getCharacteristic(Characteristic.On).setValue(that.switchStatus, undefined, '');
+			}
+			if (data !== null) {	
+				if (data.hasOwnProperty("POWER")) {
+					var status = data.POWER;
+					that.switchStatus = (status == that.onValue);
+					that.service.getCharacteristic(Characteristic.On).setValue(that.switchStatus, undefined, '');
+				}
 			}
 		}
 	});
