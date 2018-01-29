@@ -395,7 +395,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			that.activeStat = status == that.activityParameter;
 			that.service.setCharacteristic(Characteristic.StatusActive, that.activeStat);
 		} else if (topic == that.topics.stateGet) {
-			data = null;
+			var data = null;
 			try {
 			  data = JSON.parse(message);
 			}
