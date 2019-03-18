@@ -303,6 +303,10 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			if (data === null) {
 				return null
 			}
+			if (data.hasOwnProperty("ENERGY")) {
+				// Update based on Tasmota 6.4.1 tele/sonoff/SENSOR JSON response
+				data = data["ENERGY"]
+			}
 			if (data.hasOwnProperty("Power")) {
 				that.powerConsumption = parseFloat(data.Power);
 				that.service.setCharacteristic(EvePowerConsumption, that.powerConsumption);
@@ -395,7 +399,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			that.activeStat = status == that.activityParameter;
 			that.service.setCharacteristic(Characteristic.StatusActive, that.activeStat);
 		} else if (topic == that.topics.stateGet) {
-			data = null;
+			var data = null;
 			try {
 			  data = JSON.parse(message);
 			}
