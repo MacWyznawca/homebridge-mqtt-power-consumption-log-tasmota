@@ -1,4 +1,7 @@
 /*
+ * 0.9.3 20190318
+ * This preserves support for FW prior to Tasmota 5.10 and Tasmota 6.4.1.
+ *
  * 0.9.2 20170418
  * Fixed a crash that rarely occurs when the plugins are first started. 
  * 
