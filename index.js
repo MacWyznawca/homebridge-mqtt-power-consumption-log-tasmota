@@ -300,34 +300,37 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			catch (e) {
 			  that.log("JSON problem");
 			}
-			// Update based on Tasmota 6.4.1 tele/sonoff/SENSOR JSON response
-			if ((data === null) || !data.hasOwnProperty("ENERGY")) {
+			if (data === null) {
 				return null
 			}
-			if (data["ENERGY"].hasOwnProperty("Power")) {
-				that.powerConsumption = parseFloat(data["ENERGY"].Power);
+			if (data.hasOwnProperty("ENERGY")) {
+				// Update based on Tasmota 6.4.1 tele/sonoff/SENSOR JSON response
+				data = data["ENERGY"]
+			}
+			if (data.hasOwnProperty("Power")) {
+				that.powerConsumption = parseFloat(data.Power);
 				that.service.setCharacteristic(EvePowerConsumption, that.powerConsumption);
 			} else {
 				return null
 			}
 			that.lastPeriodNewData = that.lastHourNewData = that.todayNewData = true;
-			if (data["ENERGY"].hasOwnProperty("Factor")) {
-				that.powerFactor = parseFloat(data["ENERGY"].Factor);
+			if (data.hasOwnProperty("Factor")) {
+				that.powerFactor = parseFloat(data.Factor);
 				that.powerConsumptionAV = that.powerFactor > 0 ? that.powerConsumption / that.powerFactor : 0;
 				that.service.setCharacteristic(EvePowerConsumptionVA, that.powerConsumptionAV);
 			}
-			if (data["ENERGY"].hasOwnProperty("Voltage")) {
-				that.voltage = parseFloat(data["ENERGY"].Voltage);
+			if (data.hasOwnProperty("Voltage")) {
+				that.voltage = parseFloat(data.Voltage);
 				that.service.setCharacteristic(EveVolts, that.voltage);
 			}
-			if (data["ENERGY"].hasOwnProperty("Current")) {
-				that.amperage = parseFloat(data["ENERGY"].Current);
+			if (data.hasOwnProperty("Current")) {
+				that.amperage = parseFloat(data.Current);
 				that.outletNowInUse = that.outletUseByCurrent ? (that.amperage > that.outletInUseCurrent) : true
 
 				that.service.setCharacteristic(EveAmperes, that.amperage);
 				that.service.setCharacteristic(Characteristic.OutletInUse, that.outletNowInUse);
 			}
-			that.todaykWh = data["ENERGY"].hasOwnProperty("Today") ? parseFloat(data["ENERGY"].Today) : -1;
+			that.todaykWh = data.hasOwnProperty("Today") ? parseFloat(data.Today) : -1;
 			// Preserve power data
 			if (that.patchToSave) {
 				that.fs.readFile(that.patchToSave + that.filename + "_powerTMP.txt", "utf8", function(err, data) {
