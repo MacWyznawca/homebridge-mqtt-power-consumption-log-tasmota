@@ -8,12 +8,16 @@
 var inherits = require('util').inherits;
 var schedule = require('node-schedule');
 var Service, Characteristic;
+var FakeGatoHistoryService = require('fakegato-history');
 var mqtt = require('mqtt');
+const moment = require('moment');
+const util = require('util');
+
 
 module.exports = function(homebridge) {
 	Service = homebridge.hap.Service;
 	Characteristic = homebridge.hap.Characteristic;
-
+	FakeGatoHistoryService = require('fakegato-history')(homebridge);
 	homebridge.registerAccessory('homebridge-mqtt-power-consumption-log-tasmota', 'mqtt-power-consumption-log-tasmota', MqttPowerConsumptionTasmotaAccessory);
 };
 
@@ -44,6 +48,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	this.manufacturer = config['manufacturer'] || "ITEAD";
 	this.model = config['model'] || "Sonoff";
 	this.serialNumberMAC = config['serialNumberMAC'] || "";
+	this.displayName = this.name // required by FakeGato
 
 	this.url = config['url'];
 
@@ -52,7 +57,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	this.onValue = config["onValue"];
 	this.offValue = config["offValue"];
 	this.topics = config['topics'];
-
+	this.loggingService =  new FakeGatoHistoryService("energy", this, { storage: 'fs' });
 	this.totalPowerResetBy = parseInt(config["totalPowerResetBy"]) || ""; // "month", "year", "" - never
 	this.filename = this.topicStatusGet.split("/")[1];
 	this.savePeriod = parseInt(config["savePeriod"]) || 15; // in minutes.
@@ -259,9 +264,9 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 	this.service
 		.getCharacteristic(EveTotalPowerConsumption)
 		.on('get', this.getTotalPowerConsumption.bind(this));
-	/*    this.service
-	    	.getCharacteristic(EveTotalPowerConsumptionVA)
-	    	.on('get', this.getTotalPowerConsumptionVA.bind(this));	*/
+	/*		this.service
+				.getCharacteristic(EveTotalPowerConsumptionVA)
+				.on('get', this.getTotalPowerConsumptionVA.bind(this));	*/
 	this.service
 		.getCharacteristic(EveAmperes)
 		.on('get', this.getAmperes.bind(this));
@@ -295,10 +300,10 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 
 		if (topic == that.topics.energyGet) {			
 			try {
-			  data = JSON.parse(message);
+				data = JSON.parse(message);
 			}
 			catch (e) {
-			  that.log("JSON problem");
+				that.log("JSON problem");
 			}
 			if (data === null) {
 				return null
@@ -310,6 +315,7 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 			if (data.hasOwnProperty("Power")) {
 				that.powerConsumption = parseFloat(data.Power);
 				that.service.setCharacteristic(EvePowerConsumption, that.powerConsumption);
+				that.loggingService.addEntry({time: moment().unix(), power: that.powerConsumption});
 			} else {
 				return null
 			}
@@ -343,10 +349,10 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 						});
 					} else {
 						try {
-						  that.lastToSave = JSON.parse(data);
+							that.lastToSave = JSON.parse(data);
 						}
 						catch (e) {
-						  that.log("JSON problem");
+							that.log("JSON problem");
 						}					
 						if (!that.lastToSave.hasOwnProperty("lastTodaykWh") ||
 							!that.lastToSave.hasOwnProperty("todaykWh") ||
@@ -401,10 +407,10 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 		} else if (topic == that.topics.stateGet) {
 			var data = null;
 			try {
-			  data = JSON.parse(message);
+				data = JSON.parse(message);
 			}
 			catch (e) {
-			  that.log("JSON problem");
+				that.log("JSON problem");
 			}
 			if (data !== null) {	
 				if (data.hasOwnProperty("POWER")) {
@@ -580,5 +586,5 @@ MqttPowerConsumptionTasmotaAccessory.prototype.getServices = function() {
 		.setCharacteristic(Characteristic.Model, this.model)
 		.setCharacteristic(Characteristic.SerialNumber, this.serialNumberMAC);
 
-	return [informationService, this.service];
+	return [informationService, this.service, this.loggingService];
 }
