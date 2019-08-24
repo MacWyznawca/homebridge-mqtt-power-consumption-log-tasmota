@@ -525,7 +525,13 @@ function MqttPowerConsumptionTasmotaAccessory(log, config) {
 
 // Switch
 MqttPowerConsumptionTasmotaAccessory.prototype.getStatus = function(callback) {
-	callback(null, this.switchStatus);
+	if (this.activeStat) {
+		this.log("Power state for '%s' is %s", this.name, this.switchStatus);
+		callback(null, this.switchStatus);
+	} else {
+		this.log("'%s' is offline", this.name);
+		callback('No Response');
+	}
 }
 
 // Outlet in use
@@ -536,6 +542,7 @@ MqttPowerConsumptionTasmotaAccessory.prototype.getOutletUse = function(callback)
 MqttPowerConsumptionTasmotaAccessory.prototype.setStatus = function(status, callback, context) {
 	if (context !== 'fromSetValue') {
 		this.switchStatus = status;
+		this.log("Set power state on '%s' to %s", this.name, status);
 		this.client.publish(this.topicStatusSet, status ? this.onValue : this.offValue, this.publish_options);
 	}
 	callback();
